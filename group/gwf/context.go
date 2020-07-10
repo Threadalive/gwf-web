@@ -20,6 +20,8 @@ type Context struct {
 	Params map[string]string
 	// response info
 	StatusCode int
+	handler    []HandleFunc
+	index      int
 }
 
 func (c *Context) Param(key string) string {
@@ -34,6 +36,18 @@ func NewContext(w http.ResponseWriter, r *http.Request) *Context {
 		Req:    r,
 		Path:   r.URL.Path,
 		Method: r.Method,
+		index:  -1,
+	}
+}
+
+//优先执行其他中间件函数，将处理函数存入handle数组最后一个
+//即可实现在Next()前的语句在处理函数前执行，Next()前的语句
+//在处理函数后执行。
+func (c *Context) Next() {
+	c.index++
+	//执行其他中间件函数
+	for ; c.index < len(c.handler); c.index++ {
+		c.handler[c.index](c)
 	}
 }
 

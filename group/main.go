@@ -8,6 +8,9 @@ import (
 func main() {
 	r := gwf.New()
 
+	//使用全局日志中间件
+	r.Use(gwf.Logger())
+
 	r.GET("/", func(c *gwf.Context) {
 		c.HTML(http.StatusOK, "<h1>Index Page</h1>")
 	})

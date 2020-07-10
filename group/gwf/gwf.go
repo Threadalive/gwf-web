@@ -3,6 +3,7 @@ package gwf
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
 //定义请求的处理函数主体
@@ -26,6 +27,12 @@ type (
 		groups []*RouterGroup
 	}
 )
+
+//使用中间件
+func (group *RouterGroup) Use(middlewares ...HandleFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
+
+}
 
 //创建gwf实例的函数,返回一个实例引用
 func New() *Engine {
@@ -74,6 +81,16 @@ func (engine *Engine) Run(addr string) {
 
 //实现接口
 func (engine *Engine) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	var middlewares []HandleFunc
+
+	for _, group := range engine.groups {
+		//若请求路由在当前分组中,则添加当前分组的中间件
+		if strings.HasPrefix(request.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	context := NewContext(writer, request)
+	context.handler = middlewares
+
 	engine.router.handle(context)
 }
