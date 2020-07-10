@@ -68,7 +68,7 @@ func (r *router) getRouter(method string, path string) (*node, map[string]string
 		return nil, nil
 	}
 	n := root.search(searchParts, 0)
-
+	//若该路由节点已注册，遍历是否存在动态范围匹配，有则设置对应路由参数
 	if n != nil {
 		parts := parsePattern(n.pattern)
 		for index, part := range parts {

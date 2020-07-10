@@ -16,6 +16,7 @@ type Context struct {
 	// request info
 	Path   string
 	Method string
+	//动态路由参数
 	Params map[string]string
 	// response info
 	StatusCode int
