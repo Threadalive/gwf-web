@@ -1,12 +1,13 @@
-package gwf
+package middlewares
 
 import (
+	"gwf"
 	"log"
 	"time"
 )
 
-func Logger() HandleFunc {
-	return func(c *Context) {
+func Logger() gwf.HandleFunc {
+	return func(c *gwf.Context) {
 		// Start timer
 		t := time.Now()
 		// Process request

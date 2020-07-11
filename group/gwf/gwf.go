@@ -31,7 +31,6 @@ type (
 //使用中间件
 func (group *RouterGroup) Use(middlewares ...HandleFunc) {
 	group.middlewares = append(group.middlewares, middlewares...)
-
 }
 
 //创建gwf实例的函数,返回一个实例引用

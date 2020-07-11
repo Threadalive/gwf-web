@@ -24,6 +24,11 @@ type Context struct {
 	index      int
 }
 
+//服务器出错，将跳过其他中间件结束运行
+func (c *Context) Fail(statusCode int, err string) {
+	c.index = len(c.handler)
+	c.Json(statusCode, H{"message": err})
+}
 func (c *Context) Param(key string) string {
 	value, _ := c.Params[key]
 	return value
