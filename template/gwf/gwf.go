@@ -1,6 +1,7 @@
 package gwf
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"path"
@@ -26,8 +27,21 @@ type (
 		router *router
 		//存储所有路由分组
 		groups []*RouterGroup
+		//html模板
+		htmlTemplates *template.Template
+		//用户可自定义的渲染函数集
+		funcMap template.FuncMap
 	}
 )
+
+func (engine *Engine) SetFuncMap(funcMap template.FuncMap) {
+	engine.funcMap = funcMap
+}
+
+//加载html目录文件
+func (engine *Engine) LoadHTMLGlob(pattern string) {
+	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
+}
 
 func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandleFunc {
 	absolutePath := path.Join(group.prefix, relativePath)
@@ -113,6 +127,8 @@ func (engine *Engine) ServeHTTP(writer http.ResponseWriter, request *http.Reques
 	}
 	context := NewContext(writer, request)
 	context.handler = middlewares
+	//设置context中的engine为当前engine
+	context.engine = engine
 
 	engine.router.handle(context)
 }
