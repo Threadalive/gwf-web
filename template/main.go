@@ -1,7 +1,6 @@
 package main
 
 import (
-	"example/middlewares"
 	"fmt"
 	"gwf"
 	"html/template"
@@ -20,8 +19,13 @@ func formatAsDate(t time.Time) string {
 }
 
 func main() {
-	r := gwf.New()
-	r.Use(middlewares.Logger())
+	//可使用默认实例
+	r := gwf.Default()
+
+	//也可创建空白实例后自行选择使用中间件
+	//r := gwf.New()
+	//r.Use(middlewares.Logger())
+	//r.Use(middlewares.Recovery())
 
 	r.SetFuncMap(template.FuncMap{
 		"formatAsDate": formatAsDate,

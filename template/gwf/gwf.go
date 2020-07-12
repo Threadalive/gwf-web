@@ -1,6 +1,7 @@
 package gwf
 
 import (
+	"gwf/middlewares"
 	"html/template"
 	"log"
 	"net/http"
@@ -75,6 +76,14 @@ func New() *Engine {
 	engine := &Engine{router: newRouter()}
 	engine.RouterGroup = &RouterGroup{engine: engine}
 	engine.groups = []*RouterGroup{engine.RouterGroup}
+
+	return engine
+}
+
+//默认创建实例中使用日志记录和宕机恢复中间件
+func Default() *Engine {
+	engine := New()
+	engine.Use(middlewares.Logger(), middlewares.Recovery())
 
 	return engine
 }
